@@ -253,6 +253,91 @@ export function FounderProvider({ children }) {
     }))
   }, [])
 
+  // ============ MEDICINE TRACKER ============
+  const addMedicine = useCallback((medicine) => {
+    setData(prev => ({
+      ...prev,
+      medicine: {
+        ...prev.medicine,
+        list: [...(prev.medicine?.list || []), { id: Date.now(), ...medicine }]
+      }
+    }))
+  }, [])
+
+  const removeMedicine = useCallback((medicineId) => {
+    setData(prev => ({
+      ...prev,
+      medicine: {
+        ...prev.medicine,
+        list: (prev.medicine?.list || []).filter(m => m.id !== medicineId)
+      }
+    }))
+  }, [])
+
+  const toggleMedicineLog = useCallback((dateKey, medicineId) => {
+    setData(prev => {
+      const log = { ...(prev.medicine?.log || {}) }
+      const dayLog = { ...(log[dateKey] || {}) }
+      if (dayLog[medicineId]) {
+        delete dayLog[medicineId]
+      } else {
+        dayLog[medicineId] = { taken: true, time: new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' }) }
+      }
+      log[dateKey] = dayLog
+      return { ...prev, medicine: { ...prev.medicine, log } }
+    })
+  }, [])
+
+  // ============ MARTIAL ARTS TRACKER ============
+  const updateMartialArts = useCallback((updates) => {
+    setData(prev => ({
+      ...prev,
+      martialArts: { ...prev.martialArts, ...updates }
+    }))
+  }, [])
+
+  const saveMartialArtsSession = useCallback((dateKey, session) => {
+    setData(prev => ({
+      ...prev,
+      martialArts: {
+        ...prev.martialArts,
+        sessions: { ...(prev.martialArts?.sessions || {}), [dateKey]: session }
+      }
+    }))
+  }, [])
+
+  const addMartialArtsGoal = useCallback((text) => {
+    setData(prev => ({
+      ...prev,
+      martialArts: {
+        ...prev.martialArts,
+        goals: [...(prev.martialArts?.goals || []), { id: Date.now(), text, completed: false }]
+      }
+    }))
+  }, [])
+
+  const toggleMartialArtsGoal = useCallback((goalId) => {
+    setData(prev => ({
+      ...prev,
+      martialArts: {
+        ...prev.martialArts,
+        goals: (prev.martialArts?.goals || []).map(g =>
+          g.id === goalId ? { ...g, completed: !g.completed } : g
+        )
+      }
+    }))
+  }, [])
+
+  const removeMartialArtsGoal = useCallback((goalId) => {
+    setData(prev => ({
+      ...prev,
+      martialArts: {
+        ...prev.martialArts,
+        goals: (prev.martialArts?.goals || []).filter(g => g.id !== goalId)
+      }
+    }))
+  }, [])
+
   const value = {
     data,
     maxDailyScore,
@@ -278,7 +363,15 @@ export function FounderProvider({ children }) {
     resetAllData,
     importAllData,
     updateChecklist,
-    saveDailyThought
+    saveDailyThought,
+    addMedicine,
+    removeMedicine,
+    toggleMedicineLog,
+    updateMartialArts,
+    saveMartialArtsSession,
+    addMartialArtsGoal,
+    toggleMartialArtsGoal,
+    removeMartialArtsGoal
   }
 
   return (
