@@ -126,8 +126,10 @@ export const getTotalRevenue = (projects) => {
 }
 
 export const getCurrentMonthGoals = (goals) => {
-  const month = format(new Date(), 'MMMM').toLowerCase()
-  return goals.monthly[month] || goals.monthly.march
+  const now = new Date()
+  const monthYearKey = `${format(now, 'MMMM').toLowerCase()}_${now.getFullYear()}`
+  const monthKey = format(now, 'MMMM').toLowerCase()
+  return goals.monthly[monthYearKey] || goals.monthly[monthKey] || Object.values(goals.monthly)[0] || {}
 }
 
 // ============ ANALYTICS HELPERS ============
