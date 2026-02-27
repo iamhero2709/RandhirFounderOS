@@ -1,14 +1,17 @@
+import { useState } from 'react'
 import { Menu, X, Moon, Sun, ChevronLeft } from 'lucide-react'
 import { NAV_ITEMS, TOTAL_DAYS } from '../../constants'
 import { useFounder } from '../../context/FounderContext'
 import { getDayNumber, getDaysLeft } from '../../utils/helpers'
 
-// Bottom nav items shown on mobile (most important pages)
-const BOTTOM_NAV_IDS = ['dashboard', 'tracker', 'focus', 'journal', 'settings']
-const BOTTOM_NAV_ITEMS = NAV_ITEMS.filter(i => BOTTOM_NAV_IDS.includes(i.id))
+// Bottom nav: 4 primary items + "More" button for the rest
+const PRIMARY_NAV_IDS = ['dashboard', 'tracker', 'focus', 'journal']
+const PRIMARY_NAV_ITEMS = NAV_ITEMS.filter(i => PRIMARY_NAV_IDS.includes(i.id))
+const MORE_NAV_ITEMS = NAV_ITEMS.filter(i => !PRIMARY_NAV_IDS.includes(i.id))
 
 export default function Sidebar() {
   const { data, activeView, setActiveView, sidebarOpen, setSidebarOpen, theme, setTheme, updateSettings } = useFounder()
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false)
   const dayNum = getDayNumber(data.startDate)
   const daysLeft = getDaysLeft(data.startDate)
   const progress = Math.round((dayNum / TOTAL_DAYS) * 100)
@@ -98,10 +101,10 @@ export default function Sidebar() {
 
       {/* ---- Mobile Bottom Navigation Bar ---- */}
       <nav className="bottom-nav" aria-label="Mobile navigation">
-        {BOTTOM_NAV_ITEMS.map(item => (
+        {PRIMARY_NAV_ITEMS.map(item => (
           <button
             key={item.id}
-            onClick={() => setActiveView(item.id)}
+            onClick={() => { setActiveView(item.id); setMoreMenuOpen(false) }}
             className={`bottom-nav__item ${activeView === item.id ? 'bottom-nav__item--active' : ''}`}
             aria-label={item.name}
           >
@@ -109,7 +112,43 @@ export default function Sidebar() {
             <span className="bottom-nav__label">{item.name}</span>
           </button>
         ))}
+        <button
+          onClick={() => setMoreMenuOpen(!moreMenuOpen)}
+          className={`bottom-nav__item ${moreMenuOpen || MORE_NAV_ITEMS.some(i => i.id === activeView) ? 'bottom-nav__item--active' : ''}`}
+          aria-label="More options"
+        >
+          <span className="bottom-nav__emoji">☰</span>
+          <span className="bottom-nav__label">More</span>
+        </button>
       </nav>
+
+      {/* ---- Mobile "More" Drawer ---- */}
+      {moreMenuOpen && (
+        <>
+          <div className="more-drawer-overlay" onClick={() => setMoreMenuOpen(false)} />
+          <div className="more-drawer" role="menu" aria-label="More navigation options">
+            <div className="more-drawer__header">
+              <span className="more-drawer__title">All Pages</span>
+              <button className="more-drawer__close" onClick={() => setMoreMenuOpen(false)} aria-label="Close menu">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="more-drawer__grid">
+              {MORE_NAV_ITEMS.map(item => (
+                <button
+                  key={item.id}
+                  onClick={() => { setActiveView(item.id); setMoreMenuOpen(false) }}
+                  className={`more-drawer__item ${activeView === item.id ? 'more-drawer__item--active' : ''}`}
+                  role="menuitem"
+                >
+                  <span className="more-drawer__emoji">{item.emoji}</span>
+                  <span className="more-drawer__label">{item.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
     </>
   )
 }
