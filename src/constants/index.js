@@ -1,6 +1,6 @@
 import {
   Home, CheckSquare, Rocket, Target, TrendingUp, Heart, Calendar,
-  Settings, Timer, BookOpen
+  Settings, Timer, BookOpen, Pill, Swords
 } from 'lucide-react'
 
 // ============ THEME COLORS ============
@@ -48,6 +48,8 @@ export const NAV_ITEMS = [
   { id: 'timeline', name: '365-Day Map', icon: Calendar, emoji: '📅' },
   { id: 'focus', name: 'Focus Timer', icon: Timer, emoji: '⏱️' },
   { id: 'journal', name: 'Journal', icon: BookOpen, emoji: '📓' },
+  { id: 'medicine', name: 'Medicine Tracker', icon: Pill, emoji: '💊' },
+  { id: 'martialArts', name: 'Kung Fu Tracker', icon: Swords, emoji: '🥋' },
   { id: 'settings', name: 'Settings', icon: Settings, emoji: '⚙️' }
 ]
 
@@ -174,6 +176,16 @@ export const DEFAULT_FOUNDER_DATA = {
   journal: {},
   focusSessions: [],
   dailyThoughts: {},
+  medicine: {
+    list: [],
+    log: {}
+  },
+  martialArts: {
+    style: 'Kung Fu',
+    currentBelt: 'white',
+    sessions: {},
+    goals: []
+  },
   settings: {
     theme: 'dark',
     notifications: true,
@@ -204,6 +216,32 @@ export const FOCUS_PRESETS = [
   { label: 'Quick Focus', work: 25, break: 5 },
   { label: 'Deep Work', work: 50, break: 10 },
   { label: 'Marathon', work: 90, break: 20 }
+]
+
+// ============ MEDICINE FREQUENCIES ============
+export const MEDICINE_FREQUENCIES = [
+  { id: 'once_daily', label: 'Once Daily', times: 1 },
+  { id: 'twice_daily', label: 'Twice Daily', times: 2 },
+  { id: 'thrice_daily', label: 'Thrice Daily', times: 3 },
+  { id: 'as_needed', label: 'As Needed', times: 0 }
+]
+
+// ============ KUNG FU BELT LEVELS ============
+export const KUNG_FU_BELTS = [
+  { id: 'white', label: 'White Belt', color: '#e5e7eb', emoji: '⬜' },
+  { id: 'yellow', label: 'Yellow Belt', color: '#fbbf24', emoji: '🟡' },
+  { id: 'orange', label: 'Orange Belt', color: '#f97316', emoji: '🟠' },
+  { id: 'green', label: 'Green Belt', color: '#22c55e', emoji: '🟢' },
+  { id: 'blue', label: 'Blue Belt', color: '#3b82f6', emoji: '🔵' },
+  { id: 'brown', label: 'Brown Belt', color: '#92400e', emoji: '🟤' },
+  { id: 'black', label: 'Black Belt', color: '#1f2937', emoji: '⚫' }
+]
+
+// ============ KUNG FU TECHNIQUES ============
+export const KUNG_FU_TECHNIQUES = [
+  'Basic Stances', 'Punches', 'Kicks', 'Blocks',
+  'Forms / Kata', 'Sparring', 'Weapons Training',
+  'Flexibility & Stretching', 'Conditioning', 'Meditation'
 ]
 
 export const STORAGE_KEY = 'founderOS-v3'

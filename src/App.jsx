@@ -9,6 +9,8 @@ import Lifestyle from './pages/Lifestyle'
 import Timeline from './pages/Timeline'
 import FocusTimer from './pages/FocusTimer'
 import Journal from './pages/Journal'
+import MedicineTracker from './pages/MedicineTracker'
+import MartialArts from './pages/MartialArts'
 import Settings from './pages/Settings'
 import './App.css'
 
@@ -22,6 +24,8 @@ const PAGES = {
   timeline: Timeline,
   focus: FocusTimer,
   journal: Journal,
+  medicine: MedicineTracker,
+  martialArts: MartialArts,
   settings: Settings,
 }
 
