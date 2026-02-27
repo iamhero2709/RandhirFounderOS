@@ -25,9 +25,9 @@ export default async function handler(req, res) {
 
       await sql`
         INSERT INTO founder_data (id, data, updated_at)
-        VALUES ('default', ${JSON.stringify(body)}, NOW())
+        VALUES ('default', ${JSON.stringify(body)}::jsonb, NOW())
         ON CONFLICT (id) DO UPDATE
-        SET data = ${JSON.stringify(body)}, updated_at = NOW()
+        SET data = ${JSON.stringify(body)}::jsonb, updated_at = NOW()
       `
 
       return res.status(200).json({ success: true })

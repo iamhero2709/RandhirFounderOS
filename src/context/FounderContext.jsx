@@ -53,7 +53,7 @@ export function FounderProvider({ children }) {
         await setupDatabase()
         const dbData = await loadDataFromDB()
         if (cancelled) return
-        if (dbData && Object.keys(dbData).length > 0) {
+        if (dbData) {
           setData({ ...DEFAULT_FOUNDER_DATA, ...dbData })
           localStorage.setItem(STORAGE_KEY, JSON.stringify(dbData))
           setSyncStatus('synced')
@@ -81,14 +81,17 @@ export function FounderProvider({ children }) {
 
     if (isInitialLoad.current) return
 
+    let cancelled = false
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     saveTimerRef.current = setTimeout(async () => {
+      if (cancelled) return
       setSyncStatus('syncing')
       const success = await saveDataToDB(data)
-      setSyncStatus(success ? 'synced' : 'error')
+      if (!cancelled) setSyncStatus(success ? 'synced' : 'error')
     }, 2000)
 
     return () => {
+      cancelled = true
       if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
     }
   }, [data])
@@ -277,7 +280,9 @@ export function FounderProvider({ children }) {
     setData(DEFAULT_FOUNDER_DATA)
     localStorage.removeItem(STORAGE_KEY)
     localStorage.removeItem('founderOS-v2')
-    saveDataToDB(DEFAULT_FOUNDER_DATA).catch(() => {})
+    saveDataToDB(DEFAULT_FOUNDER_DATA).catch(e => {
+      console.warn('Failed to reset database:', e)
+    })
   }, [])
 
   const importAllData = useCallback((newData) => {
