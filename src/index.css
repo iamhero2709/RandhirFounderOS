@@ -286,6 +286,9 @@ body {
 .motivation-banner__quote { font-size: 1.1rem; font-weight: 700; font-style: italic; color: var(--color-text); line-height: 1.5; padding-left: 16px; }
 .motivation-banner__author { font-size: 0.8rem; font-weight: 600; color: var(--color-primary-light); margin-top: 8px; padding-left: 16px; }
 
+/* ============ MOBILE QUICK NAVIGATE (Dashboard) ============ */
+.mobile-quick-nav { display: none; }
+
 /* ============ DAILY THOUGHT ============ */
 .daily-thought { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: var(--radius-lg); padding: 20px; }
 .daily-thought__header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
@@ -504,6 +507,8 @@ body {
 
 /* ============ BOTTOM NAV (mobile) ============ */
 .bottom-nav { display: none; }
+.more-drawer-overlay { display: none; }
+.more-drawer { display: none; }
 
 /* ============ PWA INSTALL BANNER ============ */
 .pwa-banner { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: var(--gradient-primary); color: white; font-size: 0.85rem; animation: slideUp 0.3s ease; }
@@ -558,6 +563,114 @@ body {
   .bottom-nav__item--active { color: var(--color-primary-light); background: var(--color-sidebar-active); }
   .bottom-nav__emoji { font-size: 1.3rem; }
   .bottom-nav__label { font-size: 0.6rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
+
+  /* More Drawer */
+  .more-drawer-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 150;
+    animation: fadeIn 0.2s ease;
+  }
+  .more-drawer {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    background: var(--color-sidebar-bg);
+    backdrop-filter: var(--glass-blur);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-top: 1px solid var(--color-border);
+    padding: 16px;
+    padding-bottom: max(16px, env(safe-area-inset-bottom));
+    animation: slideUp 0.25s ease;
+  }
+  .more-drawer__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 0 4px;
+  }
+  .more-drawer__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-text);
+  }
+  .more-drawer__close {
+    background: var(--color-sidebar-hover);
+    border: none;
+    color: var(--color-text-muted);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast);
+  }
+  .more-drawer__close:hover { background: var(--color-sidebar-active); color: var(--color-text); }
+  .more-drawer__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .more-drawer__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 8px;
+    border: none;
+    background: var(--color-sidebar-hover);
+    color: var(--color-text-muted);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+  .more-drawer__item:hover { background: var(--color-sidebar-active); color: var(--color-text); }
+  .more-drawer__item--active { color: var(--color-primary-light); background: var(--color-sidebar-active); border: 1px solid var(--color-primary); }
+  .more-drawer__emoji { font-size: 1.5rem; }
+  .more-drawer__label { font-size: 0.7rem; font-weight: 600; text-align: center; line-height: 1.2; }
+
+  /* Mobile Quick Navigate on Dashboard */
+  .mobile-quick-nav {
+    display: block;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+  }
+  .mobile-quick-nav__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .mobile-quick-nav__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 12px 4px;
+    border: none;
+    background: var(--color-sidebar-hover);
+    color: var(--color-text-muted);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+  }
+  .mobile-quick-nav__item:hover { background: var(--color-sidebar-active); color: var(--color-text); }
+  .mobile-quick-nav__item:active { transform: scale(0.95); }
+  .mobile-quick-nav__emoji { font-size: 1.4rem; }
+  .mobile-quick-nav__label { font-size: 0.65rem; font-weight: 600; text-align: center; line-height: 1.2; color: var(--color-text); }
 
   /* Main content adjustments for bottom nav */
   .main-content { padding-bottom: calc(72px + env(safe-area-inset-bottom)); }

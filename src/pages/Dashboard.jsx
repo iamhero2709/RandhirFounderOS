@@ -4,7 +4,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { format } from 'date-fns'
 import { Card, StatCard, TaskItem, GoalProgress } from '../components/ui'
 import { useFounder } from '../context/FounderContext'
-import { TOTAL_DAYS, FOUNDER_QUOTES } from '../constants'
+import { TOTAL_DAYS, FOUNDER_QUOTES, NAV_ITEMS } from '../constants'
 import {
   getTodayKey, getDayNumber, getDaysLeft, getDayData, getWeekScore,
   getTotalRevenue, getCurrentMonthGoals, getGoalProgress, getLast7Days,
@@ -89,6 +89,22 @@ export default function Dashboard() {
       <div className="motivation-banner">
         <p className="motivation-banner__quote">"{quote.text}"</p>
         <p className="motivation-banner__author">— {quote.author}</p>
+      </div>
+
+      {/* Mobile Quick Navigate - visible only on mobile */}
+      <div className="mobile-quick-nav">
+        <div className="mobile-quick-nav__grid">
+          {NAV_ITEMS.filter(i => i.id !== 'dashboard').map(item => (
+            <button
+              key={item.id}
+              onClick={() => setActiveView(item.id)}
+              className="mobile-quick-nav__item"
+            >
+              <span className="mobile-quick-nav__emoji">{item.emoji}</span>
+              <span className="mobile-quick-nav__label">{item.name}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Quick Stats */}
