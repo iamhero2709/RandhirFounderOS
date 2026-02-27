@@ -1,6 +1,7 @@
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { STORAGE_KEY, DEFAULT_FOUNDER_DATA } from '../constants'
 import { calculateStreak, calculateBestStreak, checkAchievements, getTodayKey, getDayData, calculateScore, getMaxDailyScore } from '../utils/helpers'
+import { loadDataFromDB, saveDataToDB, setupDatabase } from '../utils/api'
 
 const FounderContext = createContext(null)
 
@@ -34,15 +35,62 @@ export function FounderProvider({ children }) {
     return DEFAULT_FOUNDER_DATA
   })
 
+  const [syncStatus, setSyncStatus] = useState('idle') // 'idle' | 'syncing' | 'synced' | 'error'
+  const saveTimerRef = useRef(null)
+  const isInitialLoad = useRef(true)
+
   const maxDailyScore = useMemo(() => getMaxDailyScore(data.customChecklist), [data.customChecklist])
 
   const [activeView, setActiveView] = useState('dashboard')
   const [sidebarOpen, setSidebarOpen] = useState(true)
   const [theme, setTheme] = useState(data.settings?.theme || 'dark')
 
-  // Persist data
+  // Load data from Neon database on startup
+  useEffect(() => {
+    let cancelled = false
+    async function initFromDB() {
+      try {
+        await setupDatabase()
+        const dbData = await loadDataFromDB()
+        if (cancelled) return
+        if (dbData && Object.keys(dbData).length > 0) {
+          setData({ ...DEFAULT_FOUNDER_DATA, ...dbData })
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(dbData))
+          setSyncStatus('synced')
+        } else {
+          // DB is empty, push current localStorage data to DB
+          const localData = localStorage.getItem(STORAGE_KEY)
+          if (localData) {
+            await saveDataToDB(JSON.parse(localData))
+          }
+          if (!cancelled) setSyncStatus('synced')
+        }
+      } catch (e) {
+        console.warn('DB init failed, using localStorage:', e)
+        if (!cancelled) setSyncStatus('error')
+      }
+      isInitialLoad.current = false
+    }
+    initFromDB()
+    return () => { cancelled = true }
+  }, [])
+
+  // Persist data to localStorage + debounced save to Neon DB
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+
+    if (isInitialLoad.current) return
+
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(async () => {
+      setSyncStatus('syncing')
+      const success = await saveDataToDB(data)
+      setSyncStatus(success ? 'synced' : 'error')
+    }, 2000)
+
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    }
   }, [data])
 
   // Theme management
@@ -229,6 +277,7 @@ export function FounderProvider({ children }) {
     setData(DEFAULT_FOUNDER_DATA)
     localStorage.removeItem(STORAGE_KEY)
     localStorage.removeItem('founderOS-v2')
+    saveDataToDB(DEFAULT_FOUNDER_DATA).catch(() => {})
   }, [])
 
   const importAllData = useCallback((newData) => {
@@ -341,6 +390,7 @@ export function FounderProvider({ children }) {
   const value = {
     data,
     maxDailyScore,
+    syncStatus,
     activeView,
     setActiveView,
     sidebarOpen,

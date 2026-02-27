@@ -45,6 +45,46 @@ function InstallBanner({ onDismiss, onInstall }) {
   )
 }
 
+function SyncIndicator() {
+  const { syncStatus } = useFounder()
+  if (syncStatus === 'idle') return null
+
+  const statusMap = {
+    syncing: { icon: '🔄', label: 'Syncing...' },
+    synced: { icon: '☁️', label: 'Saved to cloud' },
+    error: { icon: '⚠️', label: 'Offline mode' }
+  }
+  const { icon, label } = statusMap[syncStatus] || {}
+  if (!icon) return null
+
+  return (
+    <div
+      className="sync-indicator"
+      title={label}
+      style={{
+        position: 'fixed',
+        bottom: '1rem',
+        right: '1rem',
+        padding: '0.4rem 0.75rem',
+        borderRadius: '9999px',
+        fontSize: '0.75rem',
+        background: 'var(--card-bg, #1e1e2e)',
+        border: '1px solid var(--border-color, #333)',
+        color: 'var(--text-secondary, #aaa)',
+        zIndex: 1000,
+        display: 'flex',
+        alignItems: 'center',
+        gap: '0.35rem',
+        opacity: syncStatus === 'synced' ? 0.6 : 1,
+        transition: 'opacity 0.3s'
+      }}
+    >
+      <span>{icon}</span>
+      <span>{label}</span>
+    </div>
+  )
+}
+
 function App() {
   const { activeView, setActiveView } = useFounder()
   const PageComponent = PAGES[activeView] || Dashboard
@@ -102,6 +142,7 @@ function App() {
         {showBanner && <InstallBanner onDismiss={handleDismiss} onInstall={handleInstall} />}
         <PageComponent />
       </main>
+      <SyncIndicator />
     </div>
   )
 }
